@@ -1,0 +1,94 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '14.x'
+  displayName: 'Install Node.js'
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.7'
+    addToPath: true
+    architecture: 'x64'
+
+- task: Npm@0
+  displayName: 'Install TFX-CLI (VSIX generation tool)'
+  inputs:
+   arguments: 'tfx-cli --global'
+
+# The root of the repo and the az-do-secrets have separate
+# package files (now a symbolic link)... One is for building the AzDO extension package, 
+#the other is for running the actual extension itself.
+- task: Npm@1
+  displayName: 'Npm install'
+  inputs:
+    command: 'install'
+    verbose: true
+- task: Npm@1
+  displayName: 'Npm install'
+  inputs:
+    command: 'install'
+    verbose: true
+    workingDir: './azdo-detect-secrets'
+
+- task: CmdLine@2
+  displayName: 'Run npm audit'
+  inputs:
+    script: |
+      npm audit fix --dry-run 
+      if [ $? -gt 0 ]; then 
+          echo "##vso[task.logissue type=error] Issues found by npm audit."
+      fi
+    failOnStderr: false
+- task: Npm@1
+  displayName: 'Run npm build'
+  inputs: 
+   command: custom
+   verbose: true
+   customCommand: 'run build'
+
+#Run unit tests
+- task: CmdLine@2
+  displayName: 'Run unit tests'
+  inputs:
+    script: |
+      npm run test
+#Publish tests
+- task: PublishTestResults@2
+  displayName: 'Publish test results'
+  condition: succeededOrFailed()
+  inputs:
+    testRunner: JUnit
+    testResultsFiles: '**/test-results.xml'
+### End tests
+- task: CmdLine@2
+  displayName: 'Run ESLint/SonarJS'
+  inputs:
+    script: |
+      npx eslint .
+      if [ $? -gt 0 ]; then  
+          echo "##vso[task.logissue type=error] Issues found by ESLint/SonarJS."
+          exit 1
+      fi
+    failOnStderr: false
+
+
+- task: CopyFiles@2  
+  displayName: 'Copy Files' 
+  inputs:   
+    Contents: '**/*.vsix'   
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1  
+  displayName: 'Publish Artifact: drop'

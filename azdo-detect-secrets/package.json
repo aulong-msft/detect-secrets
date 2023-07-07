@@ -1,0 +1,46 @@
+{
+  "name": "azdo-detect-secrets",
+  "version": "1.3.4",
+  "description": "[detect-secrets](https://github.com/Yelp/detect-secrets) is a popular free and open source security tool to help identify secrets during the development process. This extension scans the code base for secrets by using sophisticated algorothms utilizing Shannon entropy, and reports the findings into the Azure DevOps Pipeline model to enable quick feedback and response from development teams throughout the development life-cycle.",
+  "main": "index.js",
+  "scripts": {
+    "build": "automation/build.sh",
+    "clean": "node ./dev-config/clean.js",
+    "configure": "node ./dev-config/setup.js",
+    "compile": "tsc -p ./azdo-detect-secrets",
+    "report": "npm run-script compile",
+    "test": "mocha -r ts-node/register --reporter mocha-junit-reporter"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "azure-pipelines-task-lib": "^3.1.10",
+    "crypto-js": "^4.1.1",
+    "lodash": "^4.17.21",
+    "python-shell": "^3.0.0",
+    "sha256": "^0.2.0",
+    "xmlbuilder": "^15.1.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^12.20.36",
+    "@types/q": "^1.5.5",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "chai": "^4.3.4",
+    "dotenv-json": "^1.0.0",
+    "eslint": "^7.0.0",
+    "eslint-plugin-sonarjs": "^0.10.0",
+    "mocha": "^9.1.3",
+    "mocha-junit-reporter": "^2.0.2",
+    "sync-request": "^6.1.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://CSECodeHub@dev.azure.com/CSECodeHub/477168%20-%20Security%20scanning%20in%20CICD%20pipelines/_git/477168%20-%20Security%20scanning%20in%20CICD%20pipelines"
+  },
+  "keywords": []
+}

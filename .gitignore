@@ -1,0 +1,13 @@
+.vscode 
+*.vsix
+*.map
+node_modules/
+*.js
+*.xml
+*.env.json
+!setup.js
+!clean.js
+vss-extension-dev.json
+eslint.out
+.vscode
+package-lock.json

@@ -1,0 +1,89 @@
+{
+  "id": "f6dd0ea4-0a5d-4eb9-ad68-136d4e052504",
+  "name": "CSE Detect Secrets",
+  "description": "Detect-Secrets Credential Scanner for Azure DevOps",
+  "helpMarkDown": "",
+  "category": "Utility",
+  "author": "CSE Security Solution Area",
+  "version": {
+    "Major": "1",
+    "Minor": "3",
+    "Patch": "4"
+  },
+  "instanceNameFormat": "CSE Detect-Secrets Scanner",
+  "inputs": [
+    {
+      "name": "sourceLocation",
+      "type": "string",
+      "label": "Source Code Location",
+      "helpMarkDown": "Location of source code to scan for secrets",
+      "defaultValue": "$(Build.Repository.LocalPath)",
+      "required": true
+    },
+    {
+      "name": "scanNonGitFiles",
+      "type": "boolean",
+      "label": "Scan files which are not tracked by Git",
+      "helpMarkDown": "Even if files are untracked, they are scanned for secrets",
+      "defaultValue": true,
+      "required": false
+    },
+    {
+      "name": "excludeFiles",
+      "type": "string",
+      "label": "Exclude the following files from being scanned",
+      "helpMarkDown": "Location of a file that should be ignored",
+      "defaultValue": "",
+      "required": false
+    },
+    {
+      "name": "usingwordListFile",
+      "type": "boolean",
+      "label": "Use a word-list file?",
+      "helpMarkDown": "Use a word-list file, which allows the scanner to be aware of previously-identified secrets and ignore them",
+      "defaultValue": false,
+      "required": false
+    },
+    {
+      "name": "wordListFile",
+      "type": "string",
+      "label": "Location of word-list file in repository",
+      "helpMarkDown": "Location of a word-list file (which is an allow list)  to compare against, stored in the scanned code base",
+      "defaultValue": "",
+      "required": false,
+      "visibleRule": "usingwordListFile = true"
+    },
+    {
+      "name": "usingBaselineFile",
+      "type": "boolean",
+      "label": "Use a .secrets.baseline file?",
+      "helpMarkDown": "Use a secrets.baseline file, which allows the scanner to be aware of previously-identified secrets and ignore them",
+      "defaultValue": false,
+      "required": false
+    },
+    {
+      "name": "baselineFile",
+      "type": "string",
+      "label": "Location of secrets.baseline file in repository",
+      "helpMarkDown": "Location of a secrets.baseline file to compare against, stored in the scanned code base",
+      "defaultValue": "",
+      "required": false,
+      "visibleRule": "usingBaselineFile = true"
+    },
+    {
+      "name": "setFailureasWarning",
+      "type": "boolean",
+      "label": "Treat findings as warnings instead of failures",
+      "helpMarkDown": "If this item has not been selected, the build will fail once a secret has been detected, otherwise it will pass with a warning - It will be the developers job to triage and witness warnings in the build",
+      "defaultValue": false,
+      "required": false
+    }
+  ],
+  "execution": {
+    "Node10": {
+      "target": "index.js"
+    }
+  },
+  "minimumAgentVersion": "2.144.0",
+  "friendlyName": "CSE Detect Secrets"
+}

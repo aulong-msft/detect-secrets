@@ -1,0 +1,31 @@
+#!/bin/sh
+
+exec < /dev/tty
+
+if [ -f "./vss-extension-dev.json" ]
+
+then 
+    echo "\e[1;31mYou have local development artifacts\e[0m"
+    echo "It is recommended to clean up those artifacts before committing and they must be removed for a PR."
+    echo "\e[32mBest practice is to clean up the development files before any commit as configuration of package.json and task.json could be questionable otherwise!\e[0m"
+    while read -p "Would you like to stop the commit and clean up before commiting? (Y/n):" clean; do
+        case $clean in
+            [Yy] ) echo "\e[31mCommit stopped!\e[0m\nYou can clean up the development files by executing the npm clean command from the root of this repo. '\e[32mnpm run clean\e[0m'"; exit 1;;
+            [Nn] ) echo "\e[1;31mCommit will proceed without cleaning up development files.\n\e[4;31mYou will need to clean up development files and check validity of package.json and task.json before requesting a PR!\e[0m" && break;
+        esac
+    done
+fi
+
+if  npm list eslint | grep -q 'empty' ; then
+	echo 'utilize "npm install" to install eslint and other required packages please.'; exit 1;
+fi
+
+npx eslint .
+if [ $? -gt 0 ]; then  
+    while read -p "ESLint has detected errors.  Would you like to cancel commit? (Y/n):" fix; do
+        case $fix in
+            [Yy] ) echo "Commit stopped! See eslint.out for further details"; exit 1;;
+            [Nn] ) echo "Commit will proceed" && break;
+        esac
+    done
+ fi
